@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WiFiManager</string>
+    <string name="wifi_off">Wi-Fi выключен</string>
+    <string name="wifi_on">Wi-Fi включен</string>
+    <string name="wifi_enabling">Wi-Fi включается</string>
+    <string name="wifi_disabling">Wi-Fi выключается</string>
+    <string name="wifi_unknown">Статус Wi-Fi неизвестен</string>
 </resources>

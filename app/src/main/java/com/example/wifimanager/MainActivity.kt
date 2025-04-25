@@ -1,13 +1,16 @@
 package com.example.wifimanager
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -125,34 +128,37 @@ fun WiFiListScreen() {
 
         LazyColumn {
             items(wifiList) { wifi ->
-                WiFiItem(wifi = wifi)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickable {
+                            // Открываем настройки Wi-Fi при нажатии
+                            context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or 
+                                       Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                                       Intent.FLAG_ACTIVITY_NO_ANIMATION
+                            })
+                        },
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = wifi.SSID,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Сигнал: ${WifiManager.calculateSignalLevel(wifi.level, 5) + 1}/5",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-fun WiFiItem(wifi: android.net.wifi.ScanResult) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = wifi.SSID,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Сигнал: ${wifi.level} dBm",
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }

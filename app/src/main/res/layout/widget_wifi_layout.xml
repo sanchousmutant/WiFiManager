@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,7 +12,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="2dp">
+        android:layout_marginBottom="2dp"
+        android:minHeight="24dp">
 
         <TextView
             android:id="@+id/wifi_status"
@@ -20,43 +22,52 @@
             android:layout_weight="1"
             android:text="Wi-Fi"
             android:textColor="#FFFFFF"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
         <ImageButton
             android:id="@+id/toggle_wifi_button"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_menu_compass"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/wifi_off"
             android:tint="#FFFFFF"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
             android:background="@drawable/refresh_button_background"
             android:contentDescription="Переключить Wi-Fi"
             android:layout_marginEnd="4dp" />
 
         <ImageButton
             android:id="@+id/refresh_button"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@android:drawable/ic_popup_sync"
             android:tint="#FFFFFF"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
             android:background="@drawable/refresh_button_background"
             android:contentDescription="Обновить список" />
     </LinearLayout>
 
-    <StackView
+    <ListView
         android:id="@+id/wifi_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:loopViews="false" />
+        android:divider="#1F1F1F"
+        android:dividerHeight="1dp" />
 
     <TextView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Нет доступных сетей"
+        android:text="@string/wifi_unknown"
         android:textColor="#80FFFFFF"
         android:textSize="12sp"
         android:gravity="center"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
 </LinearLayout> 
