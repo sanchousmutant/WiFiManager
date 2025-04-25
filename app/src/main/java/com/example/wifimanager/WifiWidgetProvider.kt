@@ -19,7 +19,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         const val ACTION_WIDGET_RECEIVER = "com.example.wifimanager.ACTION_WIDGET_RECEIVER"
         const val TOGGLE_WIFI_ACTION = "com.example.wifimanager.TOGGLE_WIFI"
         const val REFRESH_ACTION = "com.example.wifimanager.REFRESH"
-        const val OPEN_SETTINGS_ACTION = "com.example.wifimanager.OPEN_SETTINGS"
+        const val OPEN_WIFI_PANEL_ACTION = "com.example.wifimanager.OPEN_WIFI_PANEL"
         private var mRunnable: ActivationRunnable? = null
     }
 
@@ -28,14 +28,14 @@ class WifiWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // Обновляем каждый виджет в массиве
         appWidgetIds.forEach { appWidgetId ->
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+                updateAppWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
     private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         // Создаем RemoteViews для макета виджета
-        val views = RemoteViews(context.packageName, R.layout.widget_wifi_layout)
-
+            val views = RemoteViews(context.packageName, R.layout.widget_wifi_layout)
+            
         // Настраиваем адаптер для списка
         val serviceIntent = Intent(context, WifiListRemoteViewsService::class.java)
         views.setRemoteAdapter(R.id.wifi_list, serviceIntent)
@@ -53,16 +53,16 @@ class WifiWidgetProvider : AppWidgetProvider() {
         views.setOnClickPendingIntent(R.id.toggle_wifi_button, togglePendingIntent)
 
         // Создаем интент для обновления
-        val refreshIntent = Intent(context, WifiWidgetProvider::class.java).apply {
-            action = REFRESH_ACTION
-        }
-        val refreshPendingIntent = PendingIntent.getBroadcast(
-            context,
+                val refreshIntent = Intent(context, WifiWidgetProvider::class.java).apply {
+                    action = REFRESH_ACTION
+                }
+                val refreshPendingIntent = PendingIntent.getBroadcast(
+                    context,
             1,
-            refreshIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        views.setOnClickPendingIntent(R.id.refresh_button, refreshPendingIntent)
+                    refreshIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                views.setOnClickPendingIntent(R.id.refresh_button, refreshPendingIntent)
 
         // Получаем текущее состояние Wi-Fi
         val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -106,6 +106,18 @@ class WifiWidgetProvider : AppWidgetProvider() {
         // Настраиваем пустое состояние
         views.setEmptyView(R.id.wifi_list, R.id.empty_view)
 
+        // Устанавливаем обработчик клика на весь виджет
+        val panelIntent = Intent(context, WifiWidgetProvider::class.java).apply {
+            action = OPEN_WIFI_PANEL_ACTION
+        }
+        val panelPendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            panelIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        views.setOnClickPendingIntent(R.id.widget_layout, panelPendingIntent)
+
         // Обновляем виджет
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
@@ -140,14 +152,19 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 )
                 onUpdate(context, appWidgetManager, appWidgetIds)
             }
-            OPEN_SETTINGS_ACTION -> {
-                // Открываем настройки Wi-Fi
-                val settingsIntent = Intent(Settings.ACTION_WIFI_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or 
-                           Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                           Intent.FLAG_ACTIVITY_NO_ANIMATION
+            OPEN_WIFI_PANEL_ACTION -> {
+                try {
+                    val panelIntent = Intent(Settings.Panel.ACTION_WIFI).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(panelIntent)
+                } catch (e: Exception) {
+                    // Если панель недоступна, открываем обычные настройки Wi-Fi
+                    val settingsIntent = Intent(Settings.ACTION_WIFI_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(settingsIntent)
                 }
-                context.startActivity(settingsIntent)
             }
         }
     }

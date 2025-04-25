@@ -101,7 +101,7 @@ fun WiFiListScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+    Text(
                 text = "Wi-Fi сети",
                 style = MaterialTheme.typography.headlineMedium
             )
